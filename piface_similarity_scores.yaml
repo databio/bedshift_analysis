@@ -1,0 +1,12 @@
+pipeline_name: similarity_scores
+pipeline_type: project
+command_template: >
+  mkdir -p {looper.output_dir}/scores;
+  python3 src/calc_metrics.py -p {looper.pep_config} -i {looper.results_subdir} -o {looper.output_dir}/scores --verbose
+compute:
+  bulker_crate: databio/bedstuff
+  mem: 4000
+  cores: 1
+  time: "00:10:00"
+
+

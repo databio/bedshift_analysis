@@ -1,0 +1,15 @@
+pipeline_name: bedshift_run
+pipeline_type: sample
+var_templates:
+  refgenie_config: "$REFGENIE"
+pre_submit:
+  python_functions:
+  - refgenconf.looper_refgenie_plugin
+command_template: >
+  mkdir -p {looper.results_subdir}/{sample.sample_name};
+  bedshift -b {sample.base_path}/{sample.file} -l {sample.chrom_lens} -a {sample.add} --addfile {sample.universe} -s {sample.shift} -d {sample.drop} -r {sample.repeat} -o {looper.results_subdir}/{sample.sample_name}/{sample.sample_name}.bed
+compute:
+  bulker_crate: databio/bedstuff
+  mem: 4000
+  cores: 1
+  time: "00:10:00"

@@ -1,0 +1,7 @@
+local_output/*
+*/looper_output/*
+looper_output/*
+
+# Data is too big :(
+
+data/GRCh38*.bed

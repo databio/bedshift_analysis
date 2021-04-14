@@ -1,0 +1,19 @@
+pep_version: 2.0.0
+sample_table: "sample_table.csv"
+looper:
+  output_dir: "results/pep_main"
+  results_subdir: "bedshifted_regions"
+  pipeline_interfaces: ["../piface_similarity_scores.yaml"]
+sample_modifiers:
+  append:
+    pipeline_interfaces: "../piface_bedshift.yaml"
+    base_path: "$CODE/bedshift_analysis/data/" # Path to BED files to be perturbed
+    universe: "$CODE/bedshift_analysis/data/GRCh38-ccREs.bed" # REPLACE with path to universe
+    chrom_lens: "refgenie://hg38/fasta.chrom_sizes" # REPLACE with path to chrom_lens file
+    repeat: 10
+  derive:
+    attributes: file
+    sources:
+      BED1: 0f84fea95b736ec99914bc66e74ab6e0.bed
+      BED2: 713f58a6497a9168a326123919672ebe.bed
+      BED3: c75ea5133f825d779a02be41a529342e.bed

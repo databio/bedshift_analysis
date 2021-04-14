@@ -1,0 +1,7 @@
+sample_name,add,drop,shift,file,trial,setname1,rep1
+add1_0,0.1,0,0,DEMO_FILE,0,add,1
+drop1_0,0,0.1,0,DEMO_FILE,0,drop,2
+shift1_0,0,0,0.2,DEMO_FILE,0,shift,3
+add1_1,0.1,0,0,DEMO_FILE,1,add,1
+drop1_1,0,0.1,0,DEMO_FILE,1,drop,2
+shift1_1,0,0,0.2,DEMO_FILE,1,shift,3
