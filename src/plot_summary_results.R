@@ -34,6 +34,14 @@ transformResults = function(file, name="") {
 	return(tcm)
 }
 
+
+
+## exploring variation (response to 2nd review)
+read1 = fread(results[[1]])
+
+
+read1[, 1]
+
 st[is.na(op2), scenario1:=op1]
 st[is.na(op2), scenarioClass1:=toupper(op1)]
 st[!is.na(op2), scenario1:=paste0(op1, op1deg, "+",toupper(op2))]
@@ -54,23 +62,28 @@ rbl2 = copy(rbl)
 rbl$scenario=rep(st$scenario1,4)
 rbl$scenarioClass=rep(st$scenarioClass1,4)
 rbl$rep=rep(st$rep1,4)
-rbl$univ=rep(gsub(".*GRCh38-ccREs.?(.*).bed", "\\1", unlist(st$universe)),4)
+rbl$univ=rep(gsub(".+GRCh38-(ccREs.*).bed", "\\1", unlist(st$universe)),4)
 rbl$file=rep(substr(basename(unlist(st$file)), 1,5),4)
+
+# Results table
+dcast(rbl[file=="713f5",], sample_name + file + univ ~ metric, value.var="value")
+resultsTable = dcast(rbl, sample_name + file + univ ~ metric, value.var="value")
+resultsTable[st, shift := shift, on="sample_name"]
+resultsTable[st, add := add, on="sample_name"]
+resultsTable[st, drop := drop, on="sample_name"]
+resultsTable
+write.table(resultsTable, file=paste0(result_folder, "/summary_table.txt"),, row.names=FALSE)
 
 
 rbl2$scenario=rep(st$scenario2,4)
 rbl2$scenarioClass=rep(st$scenarioClass2,4)
 rbl2$rep=rep(st$rep2,4)
-rbl2$univ=rep(gsub(".*GRCh38-ccREs.?(.*).bed", "\\1", unlist(st$universe)),4)
+rbl2$univ=rep(gsub(".+GRCh38-(ccREs.*).bed", "\\1", unlist(st$universe)),4)
 rbl2$file=rep(substr(basename(unlist(st$file)), 1,5),4)
 
 rblc = rbind(rbl, rbl2[!is.na(scenario),])
 rblc
 
-
-# Results table
-dcast(rblc, sample_name + file ~ metric, value.var="value")[file=="713f5",]
-dcast(rblc, sample_name + file ~ metric, value.var="value")[file=="713f5",]
 
 
 
@@ -117,6 +130,23 @@ pdf(paste0("results/", project_name, "_analysis_slope_summary.pdf"), width=7, he
 print(pslope)
 dev.off()
 
+
+# final summary plot
+
+
+scoresub[grep("*SHIFT*", scenarioClass),]
+summaryShift = scoresub[grep("*SHIFT*", scenarioClass), list(operation = "SHIFT", value=mean(value)), by=list(metric)]
+summaryDrop = scoresub[grep("*DROP*", scenarioClass), list(operation = "DROP", value=mean(value)), by=list(metric)]
+summaryAdd = scoresub[grep("*ADD*", scenarioClass), list(operation = "ADD", value=mean(value)), by=list(metric)]
+
+summaryScores = rbind(summaryShift, summaryDrop, summaryAdd)
+summaryScores
+psummary = ggplot(summaryScores, aes(y=metric, x=operation, fill=value)) + geom_tile() + theme_classic()
+print(psummary)
+
+pdf(paste0("results/", project_name, "_heatmap_summary.pdf"), width=3.5, height=2)
+print(psummary)
+dev.off()
 
 
 # p = ggplot(scores, aes(y=V1, x=file, fill=metric)) + geom_bar(stat="identity", position="dodge", size=1.25, alpha=0.75) + theme_classic() + 
